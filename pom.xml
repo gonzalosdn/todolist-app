@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.gsilva.springboot.app</groupId>
-	<artifactId>springboot-app</artifactId>
+	<artifactId>api-gestor-tarea</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>springboot-app</name>
+	<name>api-gestor-tarea</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
