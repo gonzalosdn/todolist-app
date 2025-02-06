@@ -1,0 +1,30 @@
+# ➤ Ignorar la carpeta de compilación de Maven
+target/
+
+# ➤ Ignorar archivos de configuración de IDEs (IntelliJ, VS Code, Eclipse, etc.)
+.idea/
+.vscode/
+*.iml
+*.classpath
+*.project
+*.settings/
+
+# ➤ Ignorar archivos del sistema operativo (Windows / macOS)
+.DS_Store
+Thumbs.db
+
+# ➤ Ignorar logs y archivos temporales
+*.loggit
+hs_err_pid*
+
+# ➤ Ignorar archivos sensibles (pueden contener credenciales)
+application.properties
+application.yml
+.env
+
+# ➤ Ignorar archivos de dependencias descargadas (si usas wrapper de Maven o Gradle)
+.mvn/
+.gradle/
+
+# ➤ Si usas Linux, ignorar archivos swap
+*.swp
