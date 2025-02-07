@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.gsilva.springboot.app</groupId>
-	<artifactId>api-gestor-tarea</artifactId>
+	<artifactId>todolist-app</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>api-gestor-tarea</name>
+	<name>todolist-app</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
