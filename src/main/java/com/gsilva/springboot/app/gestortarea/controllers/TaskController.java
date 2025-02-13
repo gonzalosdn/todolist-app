@@ -21,14 +21,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gsilva.springboot.app.gestortarea.entities.Task;
+import com.gsilva.springboot.app.gestortarea.exceptions.UserNotFoundException;
 import com.gsilva.springboot.app.gestortarea.services.CustomUserDetails;
 import com.gsilva.springboot.app.gestortarea.services.TaskService;
+import com.gsilva.springboot.app.gestortarea.validation.IsExistDbValidation;
 
 import jakarta.validation.Valid;
 
-
 @RestController
-//@CrossOrigin(origins = "http://localhost:5173")
+// @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/tasks")
 public class TaskController {
 
@@ -36,91 +37,74 @@ public class TaskController {
     private TaskService service;
 
     @GetMapping
-    public Optional<List<Task>> list(Authentication authentication){
+    public List<Task> list(Authentication authentication) {
         Long userId = getCurrentUserId(authentication);
         return service.findByUserId(userId);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> findOne(Authentication authentication, @PathVariable Long id){
+    public ResponseEntity<Task> findOne(Authentication authentication, @PathVariable Long id) {
+
         Long userId = getCurrentUserId(authentication);
-        Optional<Task> optionalTask = service.findById(id);
+        Task task = service.findByIdAndUserId(id, userId);
 
-        if(!optionalTask.isPresent()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-        
-        if(!optionalTask.get().getUserId().equals(userId)){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-
-        return ResponseEntity.ok(optionalTask.get());
+        return ResponseEntity.ok(task);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@Valid @RequestBody Task task,BindingResult result, Authentication authentication, @PathVariable Long id){
-        
-        if(result.hasFieldErrors()){
-            return validation(result);
-        }
-        
-        Optional<Task> optionalTask = service.update(id,task);
+    public ResponseEntity<?> update(@Valid @RequestBody Task task, Authentication authentication,
+            @PathVariable Long id) {
 
-        if (optionalTask.isEmpty()){            
+        Optional<Task> optionalTask = service.update(id, task);
+
+        if (optionalTask.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }                        
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(optionalTask.get());
-        
+
     }
 
     @PostMapping
-    public ResponseEntity<?> create (@Valid @RequestBody Task task, BindingResult result, Authentication authentication){
-        
+    public ResponseEntity<?> create(@Valid @RequestBody Task task, BindingResult result,
+            Authentication authentication) {
+
         task.setUserId(getCurrentUserId(authentication));
-        if(result.hasFieldErrors()){
+        if (result.hasFieldErrors()) {
             return validation(result);
         }
 
-        
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(task));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Task> delete (Authentication authentication, @PathVariable Long id){        
-        Optional<Task> optionalTask = service.delete(id);
+    public ResponseEntity<Task> delete(Authentication authentication, @PathVariable Long id) {
+        boolean optionalTask = service.delete(id);
         Long userId = getCurrentUserId(authentication);
 
-        if (!optionalTask.get().getUserId().equals(userId)){
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();        
-        }
-
-        if(optionalTask.isEmpty()){            
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();            
+        if (!optionalTask.get().getUserId().equals(userId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(optionalTask.get());
     }
-    
+
     private Long getCurrentUserId(Authentication authentication) {
-         // Verificar que el principal sea una instancia de CustomUserDetails
 
-         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-         Long userId = userDetails.getId();
-         if (userId != null) {
-             return userId; // Devuelve el userId
-         }
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Long userId = userDetails.getId();
 
-         throw new IllegalArgumentException("User ID not found in the authentication details");
-     }
+        return userId;
 
-     private ResponseEntity<?> validation (BindingResult result){
+    }
+
+    private ResponseEntity<?> validation(BindingResult result) {
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(error -> {
             errors.put(error.getField(), "El campo " + error.getField() + " " + error.getDefaultMessage());
         });
 
-        return ResponseEntity.badRequest().body(errors); //badRequest o status(HttpStatus.BAD_REQUEST) o status(400)
-     }
+        return ResponseEntity.badRequest().body(errors); // badRequest o status(HttpStatus.BAD_REQUEST) o status(400)
+    }
 
 }

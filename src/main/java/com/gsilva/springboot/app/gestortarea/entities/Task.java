@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import com.gsilva.springboot.app.gestortarea.validation.IsExistDb;
 import com.gsilva.springboot.app.gestortarea.validation.IsRequired;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,6 +31,7 @@ public class Task {
     private String description; 
 
     @NotNull
+    @Column(name = "due_date")
     private LocalDateTime dueDate;
 
     @NotNull

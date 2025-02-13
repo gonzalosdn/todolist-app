@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gsilva.springboot.app.gestortarea.exceptions.UserNotFoundException;
 import com.gsilva.springboot.app.gestortarea.services.CustomUserDetails;
 
 @RestController
@@ -29,15 +30,12 @@ public class ResourceController {
     }
 
     private Long getCurrentUserId(Authentication authentication) {
-        // Verificar que el principal sea una instancia de CustomUserDetails
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getId();
-        if (userId != null) {
-            return userId; // Devuelve el userId
-        }
 
-        throw new IllegalArgumentException("User ID not found in the authentication details");
+        return userId;
+
     }
 
 }

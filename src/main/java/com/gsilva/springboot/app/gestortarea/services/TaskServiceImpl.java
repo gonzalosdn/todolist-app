@@ -6,10 +6,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gsilva.springboot.app.gestortarea.entities.Task;
+import com.gsilva.springboot.app.gestortarea.exceptions.TaskNotFoundException;
 import com.gsilva.springboot.app.gestortarea.repositories.TaskRepository;
 
 
@@ -17,49 +19,61 @@ import com.gsilva.springboot.app.gestortarea.repositories.TaskRepository;
 public class TaskServiceImpl implements TaskService{
 
     @Autowired
-    private TaskRepository repositoryTask;
+    private TaskRepository taskRepository;
 
     @Override
     @Transactional(readOnly = true)
     public List<Task> findAll() {
 
-        return (List<Task>) repositoryTask.findAll();
+        return (List<Task>) taskRepository.findAll();
         
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Task> findById(Long id) {
-        return repositoryTask.findById(id);
+    public Task findById(Long id) {
+        return taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<List<Task>> findByUserId(Long userId){
-        Optional<List<Task>> optionalTasks = repositoryTask.findByUserId(userId);
-        return optionalTasks;
+    public List<Task> findByUserId(Long userId){
+        List<Task> taskList = taskRepository.findByUserId(userId);
+        return taskList;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Task findByIdAndUserId (Long id, Long userId){
+        Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+
+        if (!task.getUserId().equals(userId)){
+            throw new AccessDeniedException("You don't have permission to access this task");
+        }
+        return task;
     }
 
     @Override
     @Transactional
     public Task save(Task task) {
-        return repositoryTask.save(task);
+        return taskRepository.save(task);
     }
 
     @Override
     @Transactional
-    public Optional<Task> update(Long id, Task task) {
+    public Task update(Long id, Task task) {
 
-        Optional<Task> optionalTask = repositoryTask.findById(id);
+        Optional<Task> optionalTask = taskRepository.findById(id);
         LocalDateTime utcDueDate = task.getDueDate().atOffset(ZoneOffset.UTC).toLocalDateTime();    
         if (optionalTask.isPresent()){
             Task tsk = optionalTask.orElseThrow();
             tsk.setTitle(task.getTitle());
             tsk.setDescription(task.getDescription());
             tsk.setDueDate(utcDueDate);
+            System.out.println(utcDueDate);
             tsk.setStatus(task.isStatus());
 
-            return Optional.of(repositoryTask.save(tsk));
+            return Optional.of(taskRepository.save(tsk));
         }     
         
         return optionalTask;
@@ -67,26 +81,26 @@ public class TaskServiceImpl implements TaskService{
 
     @Override
     @Transactional
-    public Optional<Task> delete(Long id) {
+    public boolean delete(Long id) {
 
-        Optional<Task> optionalTask = repositoryTask.findById(id);
-
-        if (optionalTask.isPresent()){
-
-            repositoryTask.delete(optionalTask.get());
-
-        }
-
-        //optionalTask.ifPresent(tsk -> repositoryTask.delete(tsk)); otra opcion con programacion funcional
+        Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+                
+        taskRepository.delete(task);
         
-        return optionalTask;
+        return true;
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean existsByTitle(String title){
-        return repositoryTask.existsByTitle(title);
+        return taskRepository.existsByTitle(title);
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Task findByTitle(String title){
+        return taskRepository.findByTitle(title);
+    };
 
     
 
