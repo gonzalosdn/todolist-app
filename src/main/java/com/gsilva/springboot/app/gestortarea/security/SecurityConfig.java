@@ -53,7 +53,7 @@ public class SecurityConfig {
 
                 //.requestMatchers(HttpMethod.GET,"/auth/users").permitAll()
                 //.requestMatchers(HttpMethod.POST,"/auth/register").permitAll()
-                .requestMatchers(HttpMethod.GET,"/tasks").hasAuthority("ROLE_ADMIN")
+                // .requestMatchers(HttpMethod.GET,"/tasks").hasAuthority("ROLE_ADMIN")
                 // .requestMatchers(HttpMethod.GET,"/api/products", "/api/products/{id}").hasAnyRole("ADMIN", "USER")
                 // .requestMatchers(HttpMethod.POST,"/api/products").hasRole("ADMIN")
                 // .requestMatchers(HttpMethod.PUT,"/api/products/{id}").hasRole("ADMIN")

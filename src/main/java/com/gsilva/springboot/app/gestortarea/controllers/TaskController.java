@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,6 +37,7 @@ public class TaskController {
 
     // Listar tareas segun usuario
     @GetMapping
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<List<Task>> list(Authentication authentication) {
         Long userId = getCurrentUserId(authentication);
         return ResponseEntity.status(HttpStatus.OK).body(service.findByUserId(userId));
@@ -44,6 +46,7 @@ public class TaskController {
     // Obtener tarea segun id y id de usuario (se compara que el usuario sea el
     // mismo de la tarea que el logeado actualmente)
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Task> findOne(Authentication authentication, @PathVariable Long id) {
         Long userId = getCurrentUserId(authentication);        
         return ResponseEntity.ok(service.findByIdAndUserId(id, userId));
@@ -52,6 +55,7 @@ public class TaskController {
     // Modificar tarea segun id y id de usuario (se compara que el usuario sea el
     // mismo de la tarea que el logeado actualmente)
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Task> update(@RequestBody Task task, Authentication authentication,
             @PathVariable Long id) {
         Long userId = getCurrentUserId(authentication);
@@ -59,6 +63,7 @@ public class TaskController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<?> create(@Valid @RequestBody Task task, BindingResult result,
             Authentication authentication) {
 
@@ -72,6 +77,7 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ROLE_USER')")
     public ResponseEntity<Void> delete(Authentication authentication, @PathVariable Long id) {
         Long userId = getCurrentUserId(authentication);
         service.delete(id, userId);
@@ -88,7 +94,7 @@ public class TaskController {
             errors.put(error.getField(), "El campo " + error.getField() + " " + error.getDefaultMessage());
         });
 
-        return ResponseEntity.badRequest().body(errors); // badRequest o status(HttpStatus.BAD_REQUEST) o status(400)
+        return ResponseEntity.badRequest().body(errors);
     }
 
 }
