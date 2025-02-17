@@ -1,7 +1,6 @@
 package com.gsilva.springboot.app.gestortarea.services;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.gsilva.springboot.app.gestortarea.entities.Task;
 
@@ -16,15 +15,12 @@ public interface TaskService {
 
     Task save (Task task);
 
-    Task update(Long id, Task task);
+    Task update(Long id, Task task, Long userId);
 
-    boolean delete (Long id);
+    void delete (Long id, Long userId);
 
-    boolean existsByTitle(String title);
+    boolean existsByTitle(String title);    
 
-    Task findByTitle(String title);
-
-    Task findByIdAndUserId (Long id, Long userId);
-  
+    Task findByIdAndUserId (Long id, Long userId);  
 
 }

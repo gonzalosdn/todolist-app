@@ -26,14 +26,10 @@ public class JpaUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         
-        Optional<AppUser> optionalUser = userRepository.findByUsername(username);
+        AppUser user = userRepository.findByUsername(username)
         
-        if (optionalUser.isEmpty()) {
-            throw new UsernameNotFoundException(String.format("Username %s no existe", username));
-        }
-
-        AppUser user = optionalUser.orElseThrow();
-
+        .orElseThrow(()-> new UsernameNotFoundException(String.format("Username %s no existe", username)));
+        
         List<GrantedAuthority> authorities = user.getRoles().stream()
             .map(role -> new SimpleGrantedAuthority(role.getName()))
             .collect(Collectors.toList());

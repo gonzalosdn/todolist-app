@@ -7,6 +7,7 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -52,7 +53,7 @@ public class SecurityConfig {
 
                 //.requestMatchers(HttpMethod.GET,"/auth/users").permitAll()
                 //.requestMatchers(HttpMethod.POST,"/auth/register").permitAll()
-                // .requestMatchers(HttpMethod.POST,"/api/users").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.GET,"/tasks").hasAuthority("ROLE_ADMIN")
                 // .requestMatchers(HttpMethod.GET,"/api/products", "/api/products/{id}").hasAnyRole("ADMIN", "USER")
                 // .requestMatchers(HttpMethod.POST,"/api/products").hasRole("ADMIN")
                 // .requestMatchers(HttpMethod.PUT,"/api/products/{id}").hasRole("ADMIN")

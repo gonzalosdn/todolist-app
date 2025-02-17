@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gsilva.springboot.app.gestortarea.exceptions.UserNotFoundException;
 import com.gsilva.springboot.app.gestortarea.services.CustomUserDetails;
 
 @RestController

@@ -20,7 +20,4 @@ public interface TaskRepository extends CrudRepository<Task,Long> {
 
     Optional<Task> findByIdAndUserId (Long id, Long userId);
 
-
-
-
 }

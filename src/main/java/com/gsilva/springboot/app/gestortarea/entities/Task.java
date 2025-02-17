@@ -35,7 +35,7 @@ public class Task {
     private LocalDateTime dueDate;
 
     @NotNull
-    private boolean status;
+    private Boolean status;
         
     private Long userId; // esta relacion seria un ManyToOne con mi clase User, pero como al id lo saco del jwt y no por relacionar las tablas, no lo anoto con nada
 
@@ -84,11 +84,11 @@ public class Task {
         this.dueDate = dueDate;
     }
 
-    public boolean isStatus() {
+    public Boolean isStatus() {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(Boolean status) {
         this.status = status;
     }
 
