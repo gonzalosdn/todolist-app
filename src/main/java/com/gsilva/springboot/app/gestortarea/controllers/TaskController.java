@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gsilva.springboot.app.gestortarea.dto.CreateTaskDTO;
+import com.gsilva.springboot.app.gestortarea.dto.TaskDTO;
 import com.gsilva.springboot.app.gestortarea.entities.Task;
 import com.gsilva.springboot.app.gestortarea.services.CustomUserDetails;
 import com.gsilva.springboot.app.gestortarea.services.TaskService;
@@ -38,7 +40,7 @@ public class TaskController {
     // Listar tareas segun usuario
     @GetMapping
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<List<Task>> list(Authentication authentication) {
+    public ResponseEntity<List<TaskDTO>> list(Authentication authentication) {
         Long userId = getCurrentUserId(authentication);
         return ResponseEntity.status(HttpStatus.OK).body(service.findByUserId(userId));
     }
@@ -47,7 +49,7 @@ public class TaskController {
     // mismo de la tarea que el logeado actualmente)
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<Task> findOne(Authentication authentication, @PathVariable Long id) {
+    public ResponseEntity<TaskDTO> findOne(Authentication authentication, @PathVariable Long id) {
         Long userId = getCurrentUserId(authentication);        
         return ResponseEntity.ok(service.findByIdAndUserId(id, userId));
     }
@@ -56,7 +58,7 @@ public class TaskController {
     // mismo de la tarea que el logeado actualmente)
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<Task> update(@RequestBody Task task, Authentication authentication,
+    public ResponseEntity<TaskDTO> update(@RequestBody TaskDTO task, Authentication authentication,
             @PathVariable Long id) {
         Long userId = getCurrentUserId(authentication);
         return ResponseEntity.status(HttpStatus.OK).body(service.update(id, task, userId));
@@ -64,16 +66,14 @@ public class TaskController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('ROLE_USER')")
-    public ResponseEntity<?> create(@Valid @RequestBody Task task, BindingResult result,
+    public ResponseEntity<?> create(@Valid @RequestBody CreateTaskDTO task, BindingResult result,
             Authentication authentication) {
 
         if (result.hasFieldErrors()) {
             return validation(result);
         }
 
-        task.setUserId(getCurrentUserId(authentication));
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(task));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(task, getCurrentUserId(authentication)));
     }
 
     @DeleteMapping("/{id}")

@@ -2,25 +2,26 @@ package com.gsilva.springboot.app.gestortarea.services;
 
 import java.util.List;
 
-import com.gsilva.springboot.app.gestortarea.entities.Task;
+import com.gsilva.springboot.app.gestortarea.dto.CreateTaskDTO;
+import com.gsilva.springboot.app.gestortarea.dto.TaskDTO;
 
 
 public interface TaskService {
 
-    List<Task> findAll();
+    List<TaskDTO> findAll();
 
-    Task findById(Long id);
+    TaskDTO findById(Long id);
 
-    List<Task> findByUserId(Long id);
+    List<TaskDTO> findByUserId(Long id);
 
-    Task save (Task task);
+    TaskDTO save (CreateTaskDTO task, Long userId);
 
-    Task update(Long id, Task task, Long userId);
+    TaskDTO update(Long id, TaskDTO task, Long userId);
 
     void delete (Long id, Long userId);
 
     boolean existsByTitle(String title);    
 
-    Task findByIdAndUserId (Long id, Long userId);  
+    TaskDTO findByIdAndUserId (Long id, Long userId);  
 
 }

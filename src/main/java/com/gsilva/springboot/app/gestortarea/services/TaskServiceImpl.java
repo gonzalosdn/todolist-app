@@ -1,10 +1,13 @@
 package com.gsilva.springboot.app.gestortarea.services;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gsilva.springboot.app.gestortarea.dto.CreateTaskDTO;
+import com.gsilva.springboot.app.gestortarea.dto.TaskDTO;
 import com.gsilva.springboot.app.gestortarea.entities.Task;
 import com.gsilva.springboot.app.gestortarea.exceptions.TaskNotFoundException;
 import com.gsilva.springboot.app.gestortarea.repositories.TaskRepository;
@@ -22,63 +25,77 @@ public class TaskServiceImpl implements TaskService {
     // todas las tareas sin filtrar usuarios.
     @Override
     @Transactional(readOnly = true)
-    public List<Task> findAll() {
+    public List<TaskDTO> findAll() {
 
-        return (List<Task>) taskRepository.findAll();
+        List<Task> tasks = new ArrayList<>();
+        taskRepository.findAll().forEach(tasks::add); // lo hago de esta manera porque el findAll de CrudRepository
+                                                      // devuelve un iterable y si hago List<Task> tasks =
+                                                      // taskRepository.findAll() me va a pedir hacer un cast de List si
+                                                      // o si.
+        List<TaskDTO> tasksDTO = new ArrayList<>();
+        tasks.forEach(task -> tasksDTO.add(toDTO(task)));
+        return tasksDTO;
 
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Task findById(Long id) {
-        return taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+    public TaskDTO findById(Long id) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+        return toDTO(task);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Task> findByUserId(Long userId) {
+    public List<TaskDTO> findByUserId(Long userId) {
         List<Task> taskList = taskRepository.findByUserId(userId);
-        return taskList;
+        List<TaskDTO> taskListDTO = new ArrayList<>();
+        taskList.forEach(task -> taskListDTO.add(toDTO(task)));
+        return taskListDTO;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Task findByIdAndUserId(Long id, Long userId) {
-        return taskRepository.findByIdAndUserId(id, userId)
+    public TaskDTO findByIdAndUserId(Long id, Long userId) {
+        Task task = taskRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new TaskNotFoundException(id));
-
+        return toDTO(task);
     }
 
     @Override
     @Transactional
-    public Task save(Task task) {
-        return taskRepository.save(task);
+    public TaskDTO save(CreateTaskDTO taskDTO,Long userId) {
+        Task task = createTaskToEntity(taskDTO);
+        task.setUserId(userId);
+        taskRepository.save(task);
+        return toDTO(task);
     }
 
     @Override
     @Transactional
-    public Task update(Long id, Task task, Long userId) {
+    public TaskDTO update(Long id, TaskDTO taskDTO, Long userId) {
 
         Task dbTask = taskRepository.findByIdAndUserId(id, userId)
                 .orElseThrow(() -> new TaskNotFoundException(id));
 
-        if (task.getTitle() != null) {
-            dbTask.setTitle(task.getTitle());
+        if (taskDTO.getTitle() != null) {
+            dbTask.setTitle(taskDTO.getTitle());
         }
 
-        if (task.getDescription() != null) {
-            dbTask.setDescription(task.getDescription());
+        if (taskDTO.getDescription() != null) {
+            dbTask.setDescription(taskDTO.getDescription());
         }
 
-        if (task.getDueDate() != null) {
-            dbTask.setDueDate(task.getDueDate());
+        if (taskDTO.getCreatedAt() != null) {
+            dbTask.setCreatedAt(taskDTO.getCreatedAt());
         }
 
-        if (task.isStatus() != null) {
-            dbTask.setStatus(task.isStatus());
+        if (taskDTO.isStatus() != null) {
+            dbTask.setStatus(taskDTO.isStatus());
         }
 
-        return taskRepository.save(dbTask);
+        taskRepository.save(dbTask);
+        return toDTO(dbTask);
     }
 
     @Override
@@ -93,6 +110,20 @@ public class TaskServiceImpl implements TaskService {
     @Transactional(readOnly = true)
     public boolean existsByTitle(String title) {
         return taskRepository.existsByTitle(title);
+    }
+
+    private TaskDTO toDTO(Task task) {
+        return new TaskDTO(task.getTitle(), task.getDescription(), task.getCreatedAt(), task.isStatus());
+    }
+
+    private Task toEntity(TaskDTO taskDto) {
+
+        return new Task(taskDto.getTitle(), taskDto.getDescription());
+    }    
+    
+    private Task createTaskToEntity(CreateTaskDTO taskDTO){
+        return new Task(taskDTO.getTitle(), taskDTO.getDescription());
+
     }
 
 }

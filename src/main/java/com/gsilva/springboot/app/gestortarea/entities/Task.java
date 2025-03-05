@@ -31,8 +31,8 @@ public class Task {
     private String description; 
 
     @NotNull
-    @Column(name = "due_date")
-    private LocalDateTime dueDate;
+    @Column(name = "createdAt")
+    private LocalDateTime createdAt;
 
     @NotNull
     private Boolean status;
@@ -41,14 +41,24 @@ public class Task {
 
 
     public Task(){
+        this.createdAt = LocalDateTime.now();
+        this.status = false;
     }
 
-    public Task(String title, String description, LocalDateTime dueDate, boolean status, Long userId) {   
+    public Task(String title, String description) {   
 
         this.title = title;
         this.description = description;
-        this.dueDate = dueDate;
-        this.status = status;
+        this.createdAt = LocalDateTime.now();
+        this.status = false;       
+    }
+
+    public Task(String title, String description,Long userId) {   
+
+        this.title = title;
+        this.description = description;
+        this.createdAt = LocalDateTime.now();
+        this.status = false;
         this.userId = userId;
     }
 
@@ -76,12 +86,12 @@ public class Task {
         this.description = description;
     }
 
-    public LocalDateTime getDueDate() {
-        return dueDate;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setDueDate(LocalDateTime dueDate) {
-        this.dueDate = dueDate;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Boolean isStatus() {
