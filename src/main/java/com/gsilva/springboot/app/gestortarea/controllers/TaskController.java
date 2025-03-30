@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gsilva.springboot.app.gestortarea.dto.CreateTaskDTO;
 import com.gsilva.springboot.app.gestortarea.dto.TaskDTO;
-import com.gsilva.springboot.app.gestortarea.entities.Task;
 import com.gsilva.springboot.app.gestortarea.services.CustomUserDetails;
 import com.gsilva.springboot.app.gestortarea.services.TaskService;
 

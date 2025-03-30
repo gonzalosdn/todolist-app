@@ -1,6 +1,5 @@
 package com.gsilva.springboot.app.gestortarea.services;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
@@ -114,12 +113,7 @@ public class TaskServiceImpl implements TaskService {
 
     private TaskDTO toDTO(Task task) {
         return new TaskDTO(task.getTitle(), task.getDescription(), task.getCreatedAt(), task.isStatus());
-    }
-
-    private Task toEntity(TaskDTO taskDto) {
-
-        return new Task(taskDto.getTitle(), taskDto.getDescription());
-    }    
+    }   
     
     private Task createTaskToEntity(CreateTaskDTO taskDTO){
         return new Task(taskDTO.getTitle(), taskDTO.getDescription());

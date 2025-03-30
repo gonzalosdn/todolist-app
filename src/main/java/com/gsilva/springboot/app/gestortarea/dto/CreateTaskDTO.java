@@ -1,8 +1,15 @@
 package com.gsilva.springboot.app.gestortarea.dto;
 
+import com.gsilva.springboot.app.gestortarea.validation.IsExistDb;
+import com.gsilva.springboot.app.gestortarea.validation.IsRequired;
+
 public class CreateTaskDTO {
 
+    @IsRequired
+    @IsExistDb
     private String title;
+
+    @IsRequired    
     private String description;
 
     public CreateTaskDTO() {

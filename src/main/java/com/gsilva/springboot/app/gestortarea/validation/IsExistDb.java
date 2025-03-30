@@ -13,7 +13,7 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = IsExistDbValidation.class)
 public @interface IsExistDb {
 
-    String message() default "ya existe en la base de datos! Anotaciones personalizadas";
+    String message() default "ya existe en la base de datos!";
 
 	Class<?>[] groups() default { };
 

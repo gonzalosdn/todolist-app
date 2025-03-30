@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.gsilva.springboot.app.gestortarea.validation.ExistsByUsername;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,6 +32,7 @@ public class AppUser {
 
     @Column(unique = true)
     @NotBlank
+    @ExistsByUsername
     private String username;
 
     @NotNull
