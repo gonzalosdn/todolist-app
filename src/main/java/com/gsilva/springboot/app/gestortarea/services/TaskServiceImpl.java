@@ -112,7 +112,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private TaskDTO toDTO(Task task) {
-        return new TaskDTO(task.getTitle(), task.getDescription(), task.getCreatedAt(), task.isStatus());
+        return new TaskDTO(task.getId(),task.getTitle(), task.getDescription(), task.getCreatedAt(), task.isStatus());
     }   
     
     private Task createTaskToEntity(CreateTaskDTO taskDTO){
